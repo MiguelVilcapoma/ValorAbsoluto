@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Valor Absoluto con X e Y</title>
+
+<style>
+body {
+    font-family: Arial;
+    background-color: #f4f6f8;
+    text-align: center;
+}
+
+.contenedor {
+    background: white;
+    width: 650px;
+    margin: auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+input {
+    padding: 6px;
+    width: 80px;
+    font-size: 16px;
+}
+
+button {
+    padding: 8px 15px;
+    font-size: 16px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+canvas {
+    border: 1px solid #999;
+    margin-top: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Gráfica: y = |x − a| + b</h1>
+
+<div class="contenedor">
+    <p>
+        Valor de <b>a (X)</b>:
+        <input type="number" id="valorA" value="0">
+        &nbsp;&nbsp;
+        Valor de <b>b (Y)</b>:
+        <input type="number" id="valorB" value="0">
+    </p>
+
+    <button onclick="graficar()">Graficar</button>
+
+    <canvas id="grafica" width="500" height="500"></canvas>
+</div>
+
+<script>
+function graficar() {
+
+    let a = parseFloat(document.getElementById("valorA").value);
+    let b = parseFloat(document.getElementById("valorB").value);
+
+    let canvas = document.getElementById("grafica");
+    let ctx = canvas.getContext("2d");
+
+    const ancho = canvas.width;
+    const alto = canvas.height;
+    const origenX = ancho / 2;
+    const origenY = alto / 2;
+    const escala = 25;
+
+    ctx.clearRect(0, 0, ancho, alto);
+
+    // CUADRÍCULA
+    ctx.strokeStyle = "#ddd";
+    ctx.lineWidth = 1;
+    for (let x = 0; x <= ancho; x += escala) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, alto);
+        ctx.stroke();
+    }
+    for (let y = 0; y <= alto; y += escala) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(ancho, y);
+        ctx.stroke();
+    }
+
+    // EJES
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, origenY);
+    ctx.lineTo(ancho, origenY);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(origenX, 0);
+    ctx.lineTo(origenX, alto);
+    ctx.stroke();
+
+    // FUNCIÓN y = |x - a| + b
+    ctx.strokeStyle = "blue";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+
+    for (let x = -10; x <= 10; x += 0.1) {
+        let y = Math.abs(x - a) + b;
+        let px = origenX + x * escala;
+        let py = origenY - y * escala;
+
+        if (x === -10) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+
+    // NÚMEROS EN LOS EJES
+ctx.fillStyle = "#000";
+ctx.font = "12px Arial";
+
+// EJE X
+for (let x = -10; x <= 10; x++) {
+    let px = origenX + x * escala;
+    ctx.fillText(x, px - 4, origenY + 15);
+}
+
+// EJE Y
+for (let y = -10; y <= 10; y++) {
+    if (y !== 0) {
+        let py = origenY - y * escala;
+        ctx.fillText(y, origenX + 5, py + 4);
+    }
+}
+
+    // VÉRTICE (a, b)
+    let vx = origenX + a * escala;
+    let vy = origenY - b * escala;
+
+    ctx.fillStyle = "red";
+    ctx.beginPath();
+    ctx.arc(vx, vy, 6, 0, Math.PI * 2);
+    ctx.fill();
+
+    // TEXTO DEL VÉRTICE
+    ctx.fillStyle = "black";
+    ctx.font = "14px Arial";
+    ctx.fillText("(" + a + ", " + b + ")", vx + 8, vy - 8);
+}
+
+// gráfica inicial
+graficar();
+</script>
+
+</body>
+</html>
+
